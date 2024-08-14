@@ -9,6 +9,7 @@ import ktx.app.KtxGame
 import ktx.app.KtxScreen
 import ktx.log.logger
 
+const val UNIT_SCALE = 1 / 16f
 private val LOG = logger<DarkMatter>()
 
 class DarkMatter : KtxGame<KtxScreen>() {
