@@ -9,11 +9,10 @@ import com.github.doandadr.darkmatter.ecs.component.FacingComponent
 import com.github.doandadr.darkmatter.ecs.component.FacingDirection
 import com.github.doandadr.darkmatter.ecs.component.PlayerComponent
 import com.github.doandadr.darkmatter.ecs.component.TransformComponent
-import ktx.ashley.TagDelegate
 import ktx.ashley.allOf
 import ktx.ashley.get
 
-const val TOUCH_TOLERANCE_DISTANCE = 0.2f
+private const val TOUCH_TOLERANCE_DISTANCE = 0.2f
 
 class PlayerInputSystem(private val gameViewport: Viewport) :
     IteratingSystem(allOf(PlayerComponent::class, TransformComponent::class, FacingComponent::class).get()) {

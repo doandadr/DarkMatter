@@ -17,6 +17,7 @@ class PlayerAnimationSystem(
     private var lastDirection = FacingDirection.DEFAULT
 
     override fun addedToEngine(engine: Engine) {
+        super.addedToEngine(engine)
         engine.addEntityListener(family, this)
     }
 
