@@ -2,7 +2,10 @@ package com.github.doandadr.darkmatter.ecs.system
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.SortedIteratingSystem
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.doandadr.darkmatter.ecs.component.GraphicComponent
 import com.github.doandadr.darkmatter.ecs.component.TransformComponent
@@ -16,14 +19,32 @@ private val LOG = logger<RenderSystem>()
 class RenderSystem(
     private val batch: Batch,
     private val gameViewport: Viewport,
+    private val uiViewport: Viewport,
+    backgroundTexture: Texture
 ) : SortedIteratingSystem(
     allOf(TransformComponent::class, GraphicComponent::class).get(),
     compareBy { entity -> entity[TransformComponent.mapper] }
 ) {
+    private val background = Sprite(backgroundTexture.apply {
+        setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
+    })
+
+    private val backgroundScrollSpeed = Vector2(0.03f, -0.25f)
+
     override fun update(deltaTime: Float) {
+        uiViewport.apply()
+        batch.use(uiViewport.camera.combined) {
+            // render background
+            background.run {
+                scroll(backgroundScrollSpeed.x * deltaTime, backgroundScrollSpeed.y * deltaTime)
+                draw(batch)
+            }
+        }
+
         forceSort()
         gameViewport.apply()
         batch.use(gameViewport.camera.combined) {
+            // render entities
             super.update(deltaTime)
         }
     }
