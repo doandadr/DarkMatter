@@ -16,6 +16,7 @@ enum class AnimationType(
 ) {
     NONE(""),
     DARK_MATTER("dark_matter"),
+    FIRE("fire")
 }
 
 class Animation2D(

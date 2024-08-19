@@ -31,7 +31,6 @@ class RenderSystem(
     override fun processEntity(entity: Entity, deltaTime: Float) {
         val transform = entity[TransformComponent.mapper]
         require(transform != null) { "Entity |entity| must have a TransformComponent. entity=$entity" }
-
         val graphic = entity[GraphicComponent.mapper]
         require(graphic != null) { "Entity |entity| must have a GraphicComponent. entity=$entity" }
 
@@ -41,7 +40,12 @@ class RenderSystem(
         }
         graphic.sprite.run {
             rotation = transform.rotationDeg
-            setBounds(transform.interpolatedPosition.x, transform.interpolatedPosition.y, transform.size.x, transform.size.y)
+            setBounds(
+                transform.interpolatedPosition.x,
+                transform.interpolatedPosition.y,
+                transform.size.x,
+                transform.size.y
+            )
             draw(batch)
         }
     }
