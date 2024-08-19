@@ -6,6 +6,10 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.github.doandadr.darkmatter.V_WIDTH
 import com.github.doandadr.darkmatter.ecs.component.*
+import com.github.doandadr.darkmatter.event.GameEventCollectPowerUp
+import com.github.doandadr.darkmatter.event.GameEventListener
+import com.github.doandadr.darkmatter.event.GameEventManager
+import com.github.doandadr.darkmatter.event.GameEventType
 import ktx.ashley.*
 import ktx.collections.GdxArray
 import ktx.collections.gdxArrayOf
@@ -30,7 +34,7 @@ private class SpawnPattern(
     val types: GdxArray<PowerUpType> = gdxArrayOf(type1, type2, type3, type4, type5)
 )
 
-class PowerUpSystem :
+class PowerUpSystem(private val gameEventManager: GameEventManager) :
     IteratingSystem(allOf(PowerUpComponent::class, TransformComponent::class).exclude(RemoveComponent::class).get()) {
     private val playerBoundingRect = Rectangle()
     private val powerUpBoundingRect = Rectangle()
@@ -126,23 +130,35 @@ class PowerUpSystem :
             PowerUpType.SPEED_1 -> {
                 player[MoveComponent.mapper]?.let { it.speed.y += BOOST_1_SPEED_GAIN }
             }
+
             PowerUpType.SPEED_2 -> {
                 player[MoveComponent.mapper]?.let {
                     it.speed.y += BOOST_2_SPEED_GAIN
                 }
             }
+
             PowerUpType.LIFE -> {
                 player[PlayerComponent.mapper]?.let { it.life = min(it.maxLife, it.life + LIFE_GAIN) }
             }
+
             PowerUpType.SHIELD -> {
                 player[PlayerComponent.mapper]?.let {
                     it.shield = min(it.maxShield, it.shield + SHIELD_GAIN)
                 }
             }
+
             else -> {
                 LOG.error { "Unsupported power up of type ${powerUpCmp.type}" }
             }
         }
+
+        gameEventManager.dispatchEvent(
+            GameEventType.COLLECT_POWER_UP,
+            GameEventCollectPowerUp.apply {
+                this.player = player
+                type = powerUpCmp.type
+            }
+        )
 
         powerUp.addComponent<RemoveComponent>(engine)
     }

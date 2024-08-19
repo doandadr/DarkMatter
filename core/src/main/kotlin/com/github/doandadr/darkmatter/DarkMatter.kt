@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.doandadr.darkmatter.ecs.system.*
+import com.github.doandadr.darkmatter.event.GameEventManager
 import com.github.doandadr.darkmatter.screen.GameScreen
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
@@ -30,12 +31,14 @@ class DarkMatter : KtxGame<KtxScreen>() {
     val graphicsAtlas by lazy { TextureAtlas(Gdx.files.internal("graphics/graphics.atlas")) }
     val backgroundTexture by lazy { Texture("graphics/background.png") }
 
+    val gameEventManager = GameEventManager()
+
     val engine: Engine by lazy {
         PooledEngine().apply {
             addSystem(PlayerInputSystem(gameViewport))
             addSystem(MoveSystem())
-            addSystem(PowerUpSystem())
-            addSystem(DamageSystem())
+            addSystem(PowerUpSystem(gameEventManager))
+            addSystem(DamageSystem(gameEventManager))
             addSystem(
                 PlayerAnimationSystem(
                     graphicsAtlas.findRegion("ship_base"),
@@ -45,7 +48,7 @@ class DarkMatter : KtxGame<KtxScreen>() {
             )
             addSystem(AttachSystem())
             addSystem(AnimationSystem(graphicsAtlas))
-            addSystem(RenderSystem(batch, gameViewport, uiViewport, backgroundTexture))
+            addSystem(RenderSystem(batch, gameViewport, uiViewport, backgroundTexture, gameEventManager))
             addSystem(RemoveSystem())
             addSystem(DebugSystem())
         }

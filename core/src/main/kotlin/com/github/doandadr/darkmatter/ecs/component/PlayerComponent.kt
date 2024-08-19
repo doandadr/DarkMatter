@@ -7,7 +7,7 @@ import ktx.ashley.mapperFor
 const val MAX_LIFE = 100f
 const val MAX_SHIELD = 100f
 
-class PlayerComponent : Component, Pool.Poolable, Comparable<PlayerComponent> {
+class PlayerComponent : Component, Pool.Poolable {
     var life = MAX_LIFE
     var maxLife = MAX_LIFE
     var shield = 0f
@@ -21,10 +21,6 @@ class PlayerComponent : Component, Pool.Poolable, Comparable<PlayerComponent> {
         shield = 0f
         maxShield = MAX_SHIELD
         distance = 0f
-    }
-
-    override fun compareTo(other: PlayerComponent): Int {
-        TODO("Not yet implemented")
     }
 
     companion object {
