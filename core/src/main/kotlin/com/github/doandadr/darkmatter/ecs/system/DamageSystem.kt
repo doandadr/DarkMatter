@@ -5,9 +5,8 @@ import com.badlogic.ashley.systems.IteratingSystem
 import com.github.doandadr.darkmatter.ecs.component.PlayerComponent
 import com.github.doandadr.darkmatter.ecs.component.RemoveComponent
 import com.github.doandadr.darkmatter.ecs.component.TransformComponent
+import com.github.doandadr.darkmatter.event.GameEvent
 import com.github.doandadr.darkmatter.event.GameEventManager
-import com.github.doandadr.darkmatter.event.GameEventPlayerDeath
-import com.github.doandadr.darkmatter.event.GameEventType
 import ktx.ashley.addComponent
 import ktx.ashley.allOf
 import ktx.ashley.exclude
@@ -41,7 +40,7 @@ class DamageSystem(private val gameEventManager: GameEventManager) :
             player.life -= damage
             if (player.life <= 0f) {
                 // dispatch player death event
-                gameEventManager.dispatchEvent(GameEventType.PLAYER_DEATH, GameEventPlayerDeath.apply {
+                gameEventManager.dispatchEvent(GameEvent.PlayerDeath.apply {
                     this.distance = player.distance
                 })
                 entity.addComponent<RemoveComponent>(engine) {

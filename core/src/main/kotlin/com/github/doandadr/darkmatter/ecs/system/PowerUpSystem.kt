@@ -6,10 +6,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.github.doandadr.darkmatter.V_WIDTH
 import com.github.doandadr.darkmatter.ecs.component.*
-import com.github.doandadr.darkmatter.event.GameEventCollectPowerUp
-import com.github.doandadr.darkmatter.event.GameEventListener
-import com.github.doandadr.darkmatter.event.GameEventManager
-import com.github.doandadr.darkmatter.event.GameEventType
+import com.github.doandadr.darkmatter.event.*
 import ktx.ashley.*
 import ktx.collections.GdxArray
 import ktx.collections.gdxArrayOf
@@ -152,13 +149,10 @@ class PowerUpSystem(private val gameEventManager: GameEventManager) :
             }
         }
 
-        gameEventManager.dispatchEvent(
-            GameEventType.COLLECT_POWER_UP,
-            GameEventCollectPowerUp.apply {
-                this.player = player
-                type = powerUpCmp.type
-            }
-        )
+        gameEventManager.dispatchEvent(GameEvent.CollectPowerUp.apply {
+            this.player = player
+            this.type = powerUpCmp.type
+        })
 
         powerUp.addComponent<RemoveComponent>(engine)
     }

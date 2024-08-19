@@ -8,8 +8,6 @@ import com.github.doandadr.darkmatter.ecs.component.*
 import com.github.doandadr.darkmatter.ecs.system.DAMAGE_AREA_HEIGHT
 import com.github.doandadr.darkmatter.event.GameEvent
 import com.github.doandadr.darkmatter.event.GameEventListener
-import com.github.doandadr.darkmatter.event.GameEventPlayerDeath
-import com.github.doandadr.darkmatter.event.GameEventType
 import ktx.ashley.entity
 import ktx.ashley.with
 import ktx.log.logger
@@ -22,7 +20,7 @@ class GameScreen(game: DarkMatter) : DarkMatterScreen(game), GameEventListener {
     override fun show() {
         LOG.debug { "First Screen is shown" }
 
-        gameEventManager.addListener(GameEventType.PLAYER_DEATH, this)
+        gameEventManager.addListener(GameEvent.PlayerDeath::class, this)
 
         spawnPlayer()
 
@@ -75,10 +73,12 @@ class GameScreen(game: DarkMatter) : DarkMatterScreen(game), GameEventListener {
         // LOG.debug { "Rendercalls: ${(game.batch as SpriteBatch).renderCalls}" }
     }
 
-    override fun onEvent(type: GameEventType, data: GameEvent?) {
-        if (type == GameEventType.PLAYER_DEATH) {
-            val eventData = data as GameEventPlayerDeath
-            spawnPlayer()
+    override fun onEvent(event: GameEvent) {
+        when(event) {
+            is GameEvent.PlayerDeath -> {
+                spawnPlayer()
+            }
+            GameEvent.CollectPowerUp -> TODO()
         }
     }
 }
