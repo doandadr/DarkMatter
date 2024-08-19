@@ -15,8 +15,12 @@ enum class AnimationType(
     val speedRate: Float = 1f
 ) {
     NONE(""),
-    DARK_MATTER("dark_matter"),
-    FIRE("fire")
+    DARK_MATTER("dark_matter", speedRate = 3f),
+    FIRE("fire"),
+    SPEED_1("orb_blue", speedRate = 0.5f),
+    SPEED_2("orb_yellow", speedRate = 0.5f),
+    LIFE("life"),
+    SHIELD("shield", speedRate = 0.75f),
 }
 
 class Animation2D(

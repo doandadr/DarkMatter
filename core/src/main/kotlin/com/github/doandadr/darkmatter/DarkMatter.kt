@@ -29,6 +29,7 @@ class DarkMatter : KtxGame<KtxScreen>() {
         PooledEngine().apply {
             addSystem(PlayerInputSystem(gameViewport))
             addSystem(MoveSystem())
+            addSystem(PowerUpSystem())
             addSystem(DamageSystem())
             addSystem(
                 PlayerAnimationSystem(
