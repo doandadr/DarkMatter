@@ -24,7 +24,7 @@ class GameScreen(game: DarkMatter) : DarkMatterScreen(game) {
 
         engine.entity {
             with<TransformComponent> {
-                position.set(4.5f, 8f, 0f)
+                setInitialPosition(4.5f, 8f, 0f)
             }
             with<MoveComponent>()
             with<GraphicComponent>()
