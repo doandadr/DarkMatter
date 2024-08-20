@@ -9,11 +9,15 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.utils.viewport.FitViewport
+import com.github.doandadr.darkmatter.asset.TextureAsset
+import com.github.doandadr.darkmatter.asset.TextureAtlasAsset
 import com.github.doandadr.darkmatter.ecs.system.*
 import com.github.doandadr.darkmatter.event.GameEventManager
-import com.github.doandadr.darkmatter.screen.GameScreen
+import com.github.doandadr.darkmatter.screen.LoadingScreen
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
+import ktx.assets.async.AssetStorage
+import ktx.async.KtxAsync
 import ktx.log.logger
 
 const val UNIT_SCALE = 1 / 16f
@@ -27,14 +31,19 @@ class DarkMatter : KtxGame<KtxScreen>() {
     val uiViewport = FitViewport(V_WIDTH_PIXELS.toFloat(), V_HEIGHT_PIXELS.toFloat())
     val gameViewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
     val batch: Batch by lazy { SpriteBatch() }
-
-    val graphicsAtlas by lazy { TextureAtlas(Gdx.files.internal("graphics/graphics.atlas")) }
-    val backgroundTexture by lazy { Texture("graphics/background.png") }
+    val assets: AssetStorage by lazy {
+        KtxAsync.initiate()
+        AssetStorage()
+    }
 
     val gameEventManager = GameEventManager()
 
     val engine: Engine by lazy {
         PooledEngine().apply {
+            val graphicsAtlas = assets[TextureAtlasAsset.GAME_GRAPHICS.descriptor]
+            val background = assets[TextureAsset.BACKGROUND.descriptor]
+
+
             addSystem(PlayerInputSystem(gameViewport))
             addSystem(MoveSystem())
             addSystem(PowerUpSystem(gameEventManager))
@@ -49,7 +58,7 @@ class DarkMatter : KtxGame<KtxScreen>() {
             )
             addSystem(AttachSystem())
             addSystem(AnimationSystem(graphicsAtlas))
-            addSystem(RenderSystem(batch, gameViewport, uiViewport, backgroundTexture, gameEventManager))
+            addSystem(RenderSystem(batch, gameViewport, uiViewport, background, gameEventManager))
             addSystem(RemoveSystem())
             addSystem(DebugSystem())
         }
@@ -58,15 +67,14 @@ class DarkMatter : KtxGame<KtxScreen>() {
     override fun create() {
         Gdx.app.logLevel = LOG_DEBUG
         LOG.debug { "Create game instance" }
-        addScreen(GameScreen(this))
-        setScreen<GameScreen>()
+        addScreen(LoadingScreen(this))
+        setScreen<LoadingScreen>()
     }
 
     override fun dispose() {
         super.dispose()
         LOG.debug { "Sprites in batch: ${(batch as SpriteBatch).maxSpritesInBatch}" }
         batch.dispose()
-
-        graphicsAtlas.dispose()
+        assets.dispose()
     }
 }

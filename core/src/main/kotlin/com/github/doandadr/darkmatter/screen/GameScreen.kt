@@ -1,5 +1,6 @@
 package com.github.doandadr.darkmatter.screen
 
+import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.github.doandadr.darkmatter.DarkMatter
 import com.github.doandadr.darkmatter.UNIT_SCALE
@@ -15,7 +16,7 @@ import ktx.log.logger
 private val LOG = logger<GameScreen>()
 
 /** First screen of the application. Displayed after the application is created.  */
-class GameScreen(game: DarkMatter) : DarkMatterScreen(game), GameEventListener {
+class GameScreen(game: DarkMatter, private val engine: Engine) : DarkMatterScreen(game), GameEventListener {
 
     override fun show() {
         LOG.debug { "First Screen is shown" }
@@ -79,6 +80,7 @@ class GameScreen(game: DarkMatter) : DarkMatterScreen(game), GameEventListener {
                 spawnPlayer()
             }
             GameEvent.CollectPowerUp -> TODO()
+            GameEvent.PlayerHit -> TODO()
         }
     }
 }

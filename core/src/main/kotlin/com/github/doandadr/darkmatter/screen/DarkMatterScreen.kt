@@ -7,14 +7,14 @@ import com.github.doandadr.darkmatter.DarkMatter
 import com.github.doandadr.darkmatter.event.GameEventListener
 import com.github.doandadr.darkmatter.event.GameEventManager
 import ktx.app.KtxScreen
+import ktx.assets.async.AssetStorage
 
 abstract class DarkMatterScreen(
     val game: DarkMatter,
     val gameViewport: Viewport = game.gameViewport,
     val uiViewport: Viewport = game.uiViewport,
-    val batch: Batch = game.batch,
-    val engine: Engine = game.engine,
-    val gameEventManager: GameEventManager = game.gameEventManager
+    val gameEventManager: GameEventManager = game.gameEventManager,
+    val assets : AssetStorage = game.assets
 ) : KtxScreen {
 
     override fun resize(width: Int, height: Int) {
