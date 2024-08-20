@@ -38,6 +38,12 @@ class DamageSystem(private val gameEventManager: GameEventManager) :
             }
 
             player.life -= damage
+            gameEventManager.dispatchEvent(GameEvent.PlayerHit.apply {
+                this.player = entity
+                this.life = player.life
+                this.maxLife = player.maxLife
+            })
+
             if (player.life <= 0f) {
                 // dispatch player death event
                 gameEventManager.dispatchEvent(GameEvent.PlayerDeath.apply {
