@@ -1,5 +1,6 @@
 package com.github.doandadr.darkmatter.screen
 
+import com.badlogic.gdx.Preferences
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.doandadr.darkmatter.DarkMatter
 import com.github.doandadr.darkmatter.audio.AudioService
@@ -14,6 +15,8 @@ abstract class DarkMatterScreen(
     val gameEventManager: GameEventManager = game.gameEventManager,
     val assets: AssetStorage = game.assets,
     val audioService: AudioService = game.audioService
+    ,
+    val preferences: Preferences = game.preferences
 ) : KtxScreen {
 
     override fun resize(width: Int, height: Int) {

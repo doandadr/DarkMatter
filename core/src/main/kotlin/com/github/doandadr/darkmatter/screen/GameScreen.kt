@@ -13,6 +13,9 @@ import com.github.doandadr.darkmatter.event.GameEventListener
 import ktx.ashley.entity
 import ktx.ashley.with
 import ktx.log.logger
+import ktx.preferences.flush
+import ktx.preferences.get
+import ktx.preferences.set
 
 private val LOG = logger<GameScreen>()
 
@@ -21,6 +24,7 @@ class GameScreen(game: DarkMatter, private val engine: Engine) : DarkMatterScree
 
     override fun show() {
         LOG.debug { "First Screen is shown" }
+        LOG.debug { "${preferences["highscore", 0f]}" }
 
         gameEventManager.addListener(GameEvent.PlayerDeath::class, this)
 
@@ -74,12 +78,16 @@ class GameScreen(game: DarkMatter, private val engine: Engine) : DarkMatterScree
         (game.batch as SpriteBatch).renderCalls = 0
         engine.update(delta)
         audioService.update()
-         LOG.debug { "Rendercalls: ${(game.batch as SpriteBatch).renderCalls}" }
+//         LOG.debug { "Rendercalls: ${(game.batch as SpriteBatch).renderCalls}" }
     }
 
     override fun onEvent(event: GameEvent) {
         when(event) {
             is GameEvent.PlayerDeath -> {
+                LOG.debug { "Player died with a distrance of ${event.distance}" }
+                preferences.flush{
+                    this["highscore"] = event.distance
+                }
                 spawnPlayer()
             }
             GameEvent.CollectPowerUp -> TODO()

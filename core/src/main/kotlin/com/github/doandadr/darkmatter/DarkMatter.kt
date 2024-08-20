@@ -4,11 +4,11 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Application.LOG_DEBUG
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.Preferences
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.utils.viewport.FitViewport
+import com.github.doandadr.darkmatter.asset.MusicAsset
 import com.github.doandadr.darkmatter.asset.TextureAsset
 import com.github.doandadr.darkmatter.asset.TextureAtlasAsset
 import com.github.doandadr.darkmatter.audio.AudioService
@@ -21,6 +21,8 @@ import ktx.app.KtxScreen
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
 import ktx.log.logger
+import ktx.preferences.get
+import ktx.preferences.set
 
 const val UNIT_SCALE = 1 / 16f
 const val V_WIDTH = 9
@@ -37,10 +39,9 @@ class DarkMatter : KtxGame<KtxScreen>() {
         KtxAsync.initiate()
         AssetStorage()
     }
-
     val gameEventManager = GameEventManager()
-
     val audioService: AudioService by lazy { DefaultAudioService(assets) }
+    val preferences: Preferences by lazy { Gdx.app.getPreferences("dark-matter") }
 
     val engine: Engine by lazy {
         PooledEngine().apply {
@@ -78,6 +79,9 @@ class DarkMatter : KtxGame<KtxScreen>() {
     override fun dispose() {
         super.dispose()
         LOG.debug { "Sprites in batch: ${(batch as SpriteBatch).maxSpritesInBatch}" }
+        MusicAsset.entries.forEach {
+            LOG.debug { "Refcount $it: ${assets.getReferenceCount(it.descriptor)}" }
+        }
         batch.dispose()
         assets.dispose()
     }
