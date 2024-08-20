@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.doandadr.darkmatter.asset.MusicAsset
+import com.github.doandadr.darkmatter.asset.ShaderProgramAsset
 import com.github.doandadr.darkmatter.asset.TextureAsset
 import com.github.doandadr.darkmatter.asset.TextureAtlasAsset
 import com.github.doandadr.darkmatter.audio.AudioService
@@ -21,8 +22,6 @@ import ktx.app.KtxScreen
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
 import ktx.log.logger
-import ktx.preferences.get
-import ktx.preferences.set
 
 const val UNIT_SCALE = 1 / 16f
 const val V_WIDTH = 9
@@ -63,7 +62,7 @@ class DarkMatter : KtxGame<KtxScreen>() {
             )
             addSystem(AttachSystem())
             addSystem(AnimationSystem(graphicsAtlas))
-            addSystem(RenderSystem(batch, gameViewport, uiViewport, background, gameEventManager))
+            addSystem(RenderSystem(batch, gameViewport, uiViewport, background, gameEventManager, assets[ShaderProgramAsset.OUTLINE.descriptor]))
             addSystem(RemoveSystem())
             addSystem(DebugSystem())
         }

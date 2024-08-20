@@ -16,7 +16,7 @@ private const val WINDOW_INFO_UPDATE_RATE = 0.25f
 
 class DebugSystem : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), WINDOW_INFO_UPDATE_RATE) {
     init {
-        setProcessing(false)
+        setProcessing(true)
     }
 
     override fun processEntity(entity: Entity) {
