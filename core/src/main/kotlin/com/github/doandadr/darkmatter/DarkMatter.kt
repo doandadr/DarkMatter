@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.doandadr.darkmatter.asset.TextureAsset
 import com.github.doandadr.darkmatter.asset.TextureAtlasAsset
+import com.github.doandadr.darkmatter.audio.AudioService
+import com.github.doandadr.darkmatter.audio.DefaultAudioService
 import com.github.doandadr.darkmatter.ecs.system.*
 import com.github.doandadr.darkmatter.event.GameEventManager
 import com.github.doandadr.darkmatter.screen.LoadingScreen
@@ -38,6 +40,8 @@ class DarkMatter : KtxGame<KtxScreen>() {
 
     val gameEventManager = GameEventManager()
 
+    val audioService: AudioService by lazy { DefaultAudioService(assets) }
+
     val engine: Engine by lazy {
         PooledEngine().apply {
             val graphicsAtlas = assets[TextureAtlasAsset.GAME_GRAPHICS.descriptor]
@@ -46,7 +50,7 @@ class DarkMatter : KtxGame<KtxScreen>() {
 
             addSystem(PlayerInputSystem(gameViewport))
             addSystem(MoveSystem())
-            addSystem(PowerUpSystem(gameEventManager))
+            addSystem(PowerUpSystem(gameEventManager, audioService))
             addSystem(DamageSystem(gameEventManager))
             addSystem(CameraShakeSystem(gameViewport.camera, gameEventManager))
             addSystem(

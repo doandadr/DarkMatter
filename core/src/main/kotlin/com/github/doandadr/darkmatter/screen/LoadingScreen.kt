@@ -1,6 +1,7 @@
 package com.github.doandadr.darkmatter.screen
 
 import com.github.doandadr.darkmatter.DarkMatter
+import com.github.doandadr.darkmatter.asset.SoundAsset
 import com.github.doandadr.darkmatter.asset.TextureAsset
 import com.github.doandadr.darkmatter.asset.TextureAtlasAsset
 import kotlinx.coroutines.joinAll
@@ -20,7 +21,8 @@ class LoadingScreen(
         // queue asset loading
         val assetRefs = gdxArrayOf(
             TextureAsset.entries.map { assets.loadAsync(it.descriptor) },
-            TextureAtlasAsset.entries.map { assets.loadAsync(it.descriptor) }
+            TextureAtlasAsset.entries.map { assets.loadAsync(it.descriptor) },
+            SoundAsset.entries.map { assets.loadAsync(it.descriptor) }
         ).flatten()
 
         // once assets are loaded -> change to GameScreen

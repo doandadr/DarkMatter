@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.github.doandadr.darkmatter.DarkMatter
 import com.github.doandadr.darkmatter.UNIT_SCALE
 import com.github.doandadr.darkmatter.V_WIDTH
+import com.github.doandadr.darkmatter.asset.MusicAsset
 import com.github.doandadr.darkmatter.ecs.component.*
 import com.github.doandadr.darkmatter.ecs.system.DAMAGE_AREA_HEIGHT
 import com.github.doandadr.darkmatter.event.GameEvent
@@ -23,6 +24,7 @@ class GameScreen(game: DarkMatter, private val engine: Engine) : DarkMatterScree
 
         gameEventManager.addListener(GameEvent.PlayerDeath::class, this)
 
+        audioService.play(MusicAsset.GAME)
         spawnPlayer()
 
         engine.entity {
@@ -71,7 +73,8 @@ class GameScreen(game: DarkMatter, private val engine: Engine) : DarkMatterScree
     override fun render(delta: Float) {
         (game.batch as SpriteBatch).renderCalls = 0
         engine.update(delta)
-        // LOG.debug { "Rendercalls: ${(game.batch as SpriteBatch).renderCalls}" }
+        audioService.update()
+         LOG.debug { "Rendercalls: ${(game.batch as SpriteBatch).renderCalls}" }
     }
 
     override fun onEvent(event: GameEvent) {
