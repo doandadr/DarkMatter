@@ -7,20 +7,22 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Preferences
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
-import com.github.doandadr.darkmatter.asset.MusicAsset
-import com.github.doandadr.darkmatter.asset.ShaderProgramAsset
-import com.github.doandadr.darkmatter.asset.TextureAsset
-import com.github.doandadr.darkmatter.asset.TextureAtlasAsset
+import com.github.doandadr.darkmatter.asset.*
 import com.github.doandadr.darkmatter.audio.AudioService
 import com.github.doandadr.darkmatter.audio.DefaultAudioService
 import com.github.doandadr.darkmatter.ecs.system.*
 import com.github.doandadr.darkmatter.event.GameEventManager
 import com.github.doandadr.darkmatter.screen.LoadingScreen
+import com.github.doandadr.darkmatter.ui.createSkin
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
+import ktx.collections.gdxArrayOf
 import ktx.log.logger
 
 const val UNIT_SCALE = 1 / 16f
@@ -32,6 +34,12 @@ private val LOG = logger<DarkMatter>()
 
 class DarkMatter : KtxGame<KtxScreen>() {
     val uiViewport = FitViewport(V_WIDTH_PIXELS.toFloat(), V_HEIGHT_PIXELS.toFloat())
+    val stage: Stage by lazy {
+        val result = Stage(uiViewport, batch)
+        Gdx.input.inputProcessor = result
+        result
+    }
+
     val gameViewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
     val batch: Batch by lazy { SpriteBatch() }
     val assets: AssetStorage by lazy {
@@ -62,7 +70,16 @@ class DarkMatter : KtxGame<KtxScreen>() {
             )
             addSystem(AttachSystem())
             addSystem(AnimationSystem(graphicsAtlas))
-            addSystem(RenderSystem(batch, gameViewport, uiViewport, background, gameEventManager, assets[ShaderProgramAsset.OUTLINE.descriptor]))
+            addSystem(
+                RenderSystem(
+                    batch,
+                    gameViewport,
+                    uiViewport,
+                    background,
+                    gameEventManager,
+                    assets[ShaderProgramAsset.OUTLINE.descriptor]
+                )
+            )
             addSystem(RemoveSystem())
             addSystem(DebugSystem())
         }
@@ -71,8 +88,17 @@ class DarkMatter : KtxGame<KtxScreen>() {
     override fun create() {
         Gdx.app.logLevel = LOG_DEBUG
         LOG.debug { "Create game instance" }
-        addScreen(LoadingScreen(this))
-        setScreen<LoadingScreen>()
+
+        val assetRefs = gdxArrayOf(
+            TextureAtlasAsset.entries.filter { it.isSkinAtlas }.map { assets.loadAsync(it.descriptor) },
+            BitmapFontAsset.entries.map { assets.loadAsync(it.descriptor) }
+        ).flatten()
+        KtxAsync.launch {
+            assetRefs.joinAll()
+            createSkin(assets)
+            addScreen(LoadingScreen(this@DarkMatter))
+            setScreen<LoadingScreen>()
+        }
     }
 
     override fun dispose() {
@@ -83,5 +109,6 @@ class DarkMatter : KtxGame<KtxScreen>() {
         }
         batch.dispose()
         assets.dispose()
+        stage.dispose()
     }
 }
